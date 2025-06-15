@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>CriptoDashboard 2025</title>
+  <title>Crypto Dashboard DVR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="modo-oscuro">
 
-  <!-- Animación de carga con logo -->
+  <!-- Loader -->
   <div id="loader" class="loader-fondo">
     <div class="loader-logo">DVR</div>
     <div class="loader-spinner"></div>
@@ -22,56 +22,60 @@
   </div>
 
   <div class="contenedor">
-    <header class="cabecera-flex">
-      <div>
-        <h1>🚀 CriptoDashboard 2025</h1>
-        <p class="saludo-usuario">Hola, {{ user }} 👋</p>
-      </div>
-      <a href="/logout" class="boton-salir">Cerrar sesión</a>
-    </header>
+    <div class="cabecera-flex">
+      <h1>🚀 CriptoDashboard 2025</h1>
+      <div class="saludo-usuario">Bienvenido, {{ user }} | <a class="boton-salir" href="/logout">Cerrar sesión</a></div>
+    </div>
 
+    <!-- Formulario -->
     <section class="tarjeta glass">
-      <h2>➕ Agregar Criptomoneda</h2>
+      <h2>➕ Agregar criptomoneda</h2>
       <form action="/agregar" method="POST" class="formulario">
-        <input type="text" name="nombre" required placeholder="Nombre (ej: bitcoin)">
-        <input type="number" name="cantidad" step="any" required placeholder="Cantidad que posees">
+        <input type="text" name="nombre" placeholder="Nombre (ej: bitcoin)" required>
+        <input type="number" step="any" name="cantidad" placeholder="Cantidad" required>
         <button type="submit">Agregar</button>
       </form>
     </section>
 
+    <!-- Valor total -->
     <section class="tarjeta glass">
       <h2>💰 Valor Total</h2>
       <div id="contadorValor" class="contador-grande">0</div>
     </section>
 
+    <!-- Tabla -->
     <section class="tarjeta glass">
       <h2>📋 Historial</h2>
       <div class="tabla-scroll">
         <table>
           <thead>
             <tr>
-              {% for col in columnas %}
-              <th>{{ col }}</th>
-              {% endfor %}
-              <th>Editar</th>
-              <th>Eliminar</th>
+              <th>Fecha</th>
+              <th>Cripto</th>
+              <th>Cantidad</th>
+              <th>Precio USD</th>
+              <th>Total USD</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {% for fila in registros %}
             <tr>
-              {% for col in columnas %}
-              <td>{{ fila[col] }}</td>
-              {% endfor %}
+              <td>{{ fila['fecha'] }}</td>
+              <td>{{ fila['nombre'] }}</td>
+              <td>{{ fila['cantidad'] }}</td>
+              <td>{{ fila['precio_usd'] }}</td>
+              <td>{{ fila['valor_total_usd'] }}</td>
               <td>
-                <form action="/editar/{{ fila['nombre'] }}" method="POST">
-                  <input type="number" name="nueva_cantidad" step="any" required placeholder="Nueva cantidad">
-                  <button class="btn-editar" type="submit">✏️</button>
+                <!-- Editar -->
+                <form action="/editar/{{ fila['nombre'] }}" method="POST" style="display:inline;">
+                  <input type="number" name="nueva_cantidad" step="any" placeholder="Nueva" required style="width: 70px;">
+                  <button type="submit" class="btn-editar">✏️</button>
                 </form>
-              </td>
-              <td>
-                <form action="/eliminar/{{ fila['nombre'] }}" method="POST">
-                  <button class="btn-eliminar" type="submit" onclick="return confirm('Eliminar {{ fila['nombre'] }}?')">🗑️</button>
+
+                <!-- Eliminar -->
+                <form action="/eliminar/{{ fila['nombre'] }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn-eliminar">🗑️</button>
                 </form>
               </td>
             </tr>
@@ -84,68 +88,75 @@
       </div>
     </section>
 
+    <!-- Gráfico -->
     <section class="tarjeta glass">
       <h2>📈 Evolución</h2>
       <canvas id="graficoTotal" height="120"></canvas>
     </section>
 
     <footer>
-      <p>🪙 Creado por DVR - 2025</p>
+      <p>🪙 Dashboard creado por <strong>DVR</strong> - 2025</p>
     </footer>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    // Loader
+    window.addEventListener("load", () => {
       document.getElementById("loader").style.display = "none";
+    });
 
-      const body = document.body;
-      const modoBtn = document.getElementById('modoBtn');
-      modoBtn.addEventListener('click', () => {
-        body.classList.toggle('modo-oscuro');
-        body.classList.toggle('modo-claro');
-      });
+    // Modo oscuro/claro
+    const body = document.body;
+    const modoBtn = document.getElementById('modoBtn');
+    modoBtn.addEventListener('click', () => {
+      body.classList.toggle('modo-oscuro');
+      body.classList.toggle('modo-claro');
+    });
 
-      const ctx = document.getElementById('graficoTotal').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: {{ fechas | tojson }},
-          datasets: [{
-            label: 'Valor Total USD',
-            data: {{ totales | tojson }},
-            borderColor: '#00ffe0',
-            backgroundColor: 'rgba(0,255,224,0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { labels: { color: '#eee' } }
-          },
-          scales: {
-            x: { ticks: { color: '#ccc' } },
-            y: { ticks: { color: '#ccc' } }
-          }
+    // Contador valor total
+    function animarContador(id, valorFinal) {
+      let actual = 0;
+      const incremento = valorFinal / 60;
+      const el = document.getElementById(id);
+      const anim = setInterval(() => {
+        actual += incremento;
+        if (actual >= valorFinal) {
+          el.innerText = valorFinal.toLocaleString("en-US", {style: "currency", currency: "USD"});
+          clearInterval(anim);
+        } else {
+          el.innerText = actual.toLocaleString("en-US", {style: "currency", currency: "USD"});
         }
-      });
+      }, 20);
+    }
+    animarContador("contadorValor", {{ totales[-1]|default(0) }});
 
-      function animarContador(id, valorFinal) {
-        let actual = 0;
-        const incremento = valorFinal / 60;
-        const el = document.getElementById(id);
-        const anim = setInterval(() => {
-          actual += incremento;
-          if (actual >= valorFinal) {
-            el.innerText = valorFinal.toLocaleString("en-US", { style: "currency", currency: "USD" });
-            clearInterval(anim);
-          } else {
-            el.innerText = actual.toLocaleString("en-US", { style: "currency", currency: "USD" });
+    // Gráfico
+    const ctx = document.getElementById('graficoTotal').getContext('2d');
+    const grafico = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ fechas | tojson }},
+        datasets: [{
+          label: 'Valor Total USD',
+          data: {{ totales | tojson }},
+          borderColor: '#00ffe0',
+          backgroundColor: 'rgba(0,255,224,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#eee' }
           }
-        }, 20);
+        },
+        scales: {
+          x: { ticks: { color: '#ccc' } },
+          y: { ticks: { color: '#ccc' } }
+        }
       }
-      animarContador("contadorValor", {{ totales[-1] | default(0) }});
     });
   </script>
 </body>

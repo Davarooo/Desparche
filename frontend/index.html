@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard DVR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="modo-oscuro">
+
+  <!-- Botón modo -->
+  <div class="modo-toggle">
+    <button id="modoBtn">🌗</button>
+  </div>
+
+  <div class="contenedor">
+    <header class="cabecera-flex">
+      <div>
+        <h1>🚀 Crypto Dashboard 2025</h1>
+        <p class="saludo-usuario">Hola, Daniel 👋</p>
+      </div>
+    </header>
+
+    <!-- Sección Valor Total -->
+    <section class="tarjeta glass">
+      <h2>💰 Valor Total</h2>
+      <div id="contadorValor" class="contador-grande">$0</div>
+    </section>
+
+    <!-- Sección Gráfico -->
+    <section class="tarjeta glass">
+      <h2>📈 Evolución</h2>
+      <canvas id="graficoTotal" height="120"></canvas>
+    </section>
+
+    <footer>
+      <p>🪙 Creado por <strong>DVR</strong> - 2025</p>
+    </footer>
+  </div>
+
+  <!-- JS: Dark mode + Gráfico + Animación -->
+  <script>
+    // Alternancia modo oscuro/claro
+    document.getElementById("modoBtn").addEventListener("click", () => {
+      document.body.classList.toggle("modo-oscuro");
+      document.body.classList.toggle("modo-claro");
+    });
+
+    // Contador animado
+    function animarContador(id, valorFinal) {
+      let actual = 0;
+      const incremento = valorFinal / 60;
+      const el = document.getElementById(id);
+      const anim = setInterval(() => {
+        actual += incremento;
+        if (actual >= valorFinal) {
+          el.innerText = valorFinal.toLocaleString("en-US", { style: "currency", currency: "USD" });
+          clearInterval(anim);
+        } else {
+          el.innerText = actual.toLocaleString("en-US", { style: "currency", currency: "USD" });
+        }
+      }, 20);
+    }
+    animarContador("contadorValor", 15321.75); // puedes cambiar el valor real
+
+    // Gráfico con datos simulados
+    const ctx = document.getElementById('graficoTotal').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ["2025-06-13", "2025-06-14", "2025-06-15"],
+        datasets: [{
+          label: 'Valor Total USD',
+          data: [8300, 12200, 15321.75],
+          borderColor: '#00ffe0',
+          backgroundColor: 'rgba(0,255,224,0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#eee' } }
+        },
+        scales: {
+          x: { ticks: { color: '#ccc' } },
+          y: { ticks: { color: '#ccc' } }
+        }
+      }
+    });
+  </script>
+
+  <!-- ✅ Asistente Convai incorporado -->
+  <script src="https://cdn.convai.com/convai.min.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const widget = new ConvaiWidget({
+        apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
+        characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+        enableMic: true,
+        enableAudio: true,
+        enableText: true,
+        showConvaiWidget: true
+      });
+      widget.mount(document.body);
+    });
+  </script>
+
+</body>
+</html>

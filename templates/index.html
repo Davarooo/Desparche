@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard Moderno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="modo-oscuro">
+
+  <div class="modo-toggle">
+    <button id="modoBtn">🌗 Cambiar modo</button>
+  </div>
+
+  <div class="contenedor">
+    <header>
+      <h1>🚀 CriptoDashboard 2025</h1>
+    </header>
+
+    <section class="tarjeta">
+      <h2>📋 Historial</h2>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              {% for col in columnas %}
+              <th>{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for fila in registros %}
+            <tr>
+              {% for col in columnas %}
+              <td>{{ fila[col] }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>📈 Evolución</h2>
+      <canvas id="graficoTotal" height="120"></canvas>
+    </section>
+
+    <footer>
+      <p>🪙 DVR - 2025</p>
+    </footer>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('graficoTotal').getContext('2d');
+    const grafico = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ fechas | tojson }},
+        datasets: [{
+          label: 'Valor Total USD',
+          data: {{ totales | tojson }},
+          borderColor: '#00ffe0',
+          backgroundColor: 'rgba(0,255,224,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#eee' }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#ccc' } },
+          y: { ticks: { color: '#ccc' } }
+        }
+      }
+    });
+
+    // Cambiar modo claro/oscuro
+    const body = document.body;
+    const modoBtn = document.getElementById('modoBtn');
+    modoBtn.addEventListener('click', () => {
+      body.classList.toggle('modo-oscuro');
+      body.classList.toggle('modo-claro');
+    });
+  </script>
+</body>
+</html>

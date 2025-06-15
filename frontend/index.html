@@ -61,7 +61,12 @@
     </section>
   </div>
 
-  <!-- Scripts -->
+  <!-- Botón flotante del asistente -->
+  <div id="btnAsistente" class="boton-asistente" onclick="abrirAsistente()">
+    🤖 Asistente
+  </div>
+
+  <!-- Lógica JS -->
   <script>
     const API_URL = "https://api.coingecko.com/api/v3/simple/price?ids=";
     const STORAGE_KEY = "portafolioDVR";
@@ -147,20 +152,27 @@
     };
   </script>
 
-  <!-- ✅ Asistente Convai -->
+  <!-- Asistente Convai vía módulo -->
   <script type="module">
     import ConvaiClient from 'https://cdn.jsdelivr.net/npm/convai-web-sdk@latest/dist/convai-web-sdk.esm.js';
 
-    const client = new ConvaiClient({
-      apikey: 'c1fc55dc06242d8b2bb25f9645def488',
-      characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
-      enableAudio: true,
-      enableText: true,
-      enableMic: true,
-      showConvaiWidget: true
-    });
-
-    client.mount(document.body);
+    let client = null;
+    function abrirAsistente() {
+      if (!client) {
+        client = new ConvaiClient({
+          apikey: 'c1fc55dc06242d8b2bb25f9645def488',
+          characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+          enableAudio: true,
+          enableText: true,
+          enableMic: true,
+          showConvaiWidget: true
+        });
+        client.mount(document.body);
+      } else {
+        client.openWidget();
+      }
+    }
+    window.abrirAsistente = abrirAsistente;
   </script>
 
 </body>

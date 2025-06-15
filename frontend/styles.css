@@ -1,15 +1,12 @@
-/* Tipografía y base */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #0c0c0c;
   color: #fff;
-  transition: all 0.3s ease-in-out;
 }
 
 h1, h2, h3 {
   font-family: 'Orbitron', sans-serif;
-  margin: 0.5rem 0;
 }
 
 a {
@@ -28,12 +25,10 @@ button {
   font-weight: bold;
   transition: background 0.2s;
 }
-
 button:hover {
   background: linear-gradient(135deg, #00b3a1, #00ffe0);
 }
 
-/* Layout */
 .contenedor {
   max-width: 900px;
   margin: 2rem auto;
@@ -50,7 +45,6 @@ button:hover {
   box-shadow: 0 0 25px rgba(0, 255, 224, 0.1);
 }
 
-/* Formulario */
 .formulario-login input,
 .formulario input {
   padding: 10px;
@@ -64,7 +58,6 @@ button:hover {
   margin-top: 1rem;
 }
 
-/* Cabecera */
 .cabecera-flex {
   display: flex;
   justify-content: space-between;
@@ -79,7 +72,6 @@ button:hover {
   border-radius: 8px;
 }
 
-/* Tarjetas */
 .tarjeta {
   background: #1a1a1a;
   border-radius: 16px;
@@ -93,7 +85,6 @@ button:hover {
   border: 1px solid rgba(0, 255, 224, 0.1);
 }
 
-/* Contador */
 .contador-grande {
   font-size: 2rem;
   color: #00ffe0;
@@ -101,7 +92,6 @@ button:hover {
   margin-top: 1rem;
 }
 
-/* Tabla */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -117,7 +107,6 @@ th, td {
 th {
   background-color: #00ffe0;
   color: #000;
-  font-weight: bold;
 }
 
 td button {
@@ -125,6 +114,24 @@ td button {
   color: white;
   border-radius: 6px;
   padding: 6px 10px;
+}
+
+/* Botón del asistente */
+.boton-asistente {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #00ffe0, #0077b6);
+  color: #000;
+  padding: 12px 16px;
+  border-radius: 50px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 255, 224, 0.3);
+  transition: transform 0.2s ease;
+  z-index: 999;
+}
+.boton-asistente:hover {
+  transform: scale(1.05);
 }
 
 /* Responsive */

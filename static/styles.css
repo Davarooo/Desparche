@@ -1,123 +1,64 @@
-body {
-  font-family: 'Sora', sans-serif;
-  margin: 0;
-  background-color: #0f1117;
-  color: #ffffff;
+/* Botón modo flotante */
+.modo-toggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 999;
 }
-
-.modo-claro {
-  background-color: #f4f4f4;
-  color: #000;
-}
-
-.contenedor {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-header h1 {
-  font-size: 2rem;
-}
-
-header .cabecera-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.saludo-usuario {
-  color: #aaa;
-}
-
-.boton-salir {
-  background-color: #ff4444;
-  color: white;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-.boton-salir:hover {
-  background-color: #d12f2f;
-}
-
-.tarjeta {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1.5rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 30px rgba(0, 255, 224, 0.08);
-}
-
-input, button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
+#modoBtn {
+  background: #00ffe0;
   border: none;
-  border-radius: 10px;
-}
-
-input {
-  background-color: #1a1d26;
-  color: white;
-}
-
-button {
-  background-color: #00ffe0;
-  color: #000;
-  font-weight: bold;
+  color: black;
+  padding: 10px 14px;
+  border-radius: 50%;
+  font-size: 1.2rem;
   cursor: pointer;
 }
-button:hover {
-  background-color: #00ccb4;
-}
 
-.loader-fondo {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-.loader-spinner {
-  border: 8px solid #222;
-  border-top: 8px solid #00ffe0;
-  border-radius: 50%;
-  width: 60px; height: 60px;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.login-contenedor {
-  display: flex;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-tarjeta {
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
+/* Footer */
+footer {
+  margin-top: 3rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,255,224,0.2);
-  backdrop-filter: blur(12px);
+  color: #999;
+  font-size: 0.95rem;
 }
 
-.tabla-scroll {
-  overflow-x: auto;
+/* Botones especiales */
+.btn-editar, .btn-eliminar {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.btn-editar {
+  background-color: #00c8ff;
+  color: #000;
+}
+.btn-eliminar {
+  background-color: #ff5e5e;
+  color: #fff;
+}
+.btn-editar:hover {
+  background-color: #009fd4;
+}
+.btn-eliminar:hover {
+  background-color: #cc3838;
+}
+
+/* Exportar Excel */
+.exportar-derecha {
+  text-align: right;
+  margin-top: 1rem;
+}
+.boton-exportar {
+  background: #ffee00;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
+.boton-exportar:hover {
+  background: #e0d200;
 }

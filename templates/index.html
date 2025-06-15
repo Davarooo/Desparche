@@ -4,36 +4,38 @@
   <meta charset="UTF-8">
   <title>Crypto Dashboard 2025</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="modo-oscuro">
+
+  <!-- Botón flotante cambiar modo -->
+  <div class="modo-toggle">
+    <button id="modoBtn">🌗</button>
+  </div>
+
   <!-- Pantalla de carga -->
   <div id="loader" class="loader-fondo">
     <div class="loader-spinner"></div>
   </div>
 
-  <div class="modo-toggle">
-    <button id="modoBtn">🌗 Cambiar modo</button>
-  </div>
-
   <div class="contenedor">
-    <header>
-      <h1>🚀 CriptoDashboard 2025</h1>
+    <header class="cabecera-flex">
+      <div>
+        <h1>🚀 CriptoDashboard 2025</h1>
+        <p class="saludo-usuario">Hola, {{ user }} 👋</p>
+      </div>
+      <a href="/logout" class="boton-salir">Cerrar sesión</a>
     </header>
 
     <!-- Formulario -->
     <section class="tarjeta">
       <h2>➕ Agregar criptomoneda</h2>
       <form action="/agregar" method="POST" class="formulario">
-        <label for="nombre">Nombre (ej: bitcoin):</label>
-        <input type="text" id="nombre" name="nombre" required placeholder="ethereum, solana...">
-
-        <label for="cantidad">Cantidad que posees:</label>
-        <input type="number" step="any" id="cantidad" name="cantidad" required placeholder="Ej: 2.5">
-
-        <button type="submit">Agregar al portafolio</button>
+        <input type="text" name="nombre" required placeholder="Nombre de la cripto (ej: bitcoin)">
+        <input type="number" name="cantidad" step="any" required placeholder="Cantidad que posees">
+        <button type="submit">Agregar</button>
       </form>
     </section>
 
@@ -43,7 +45,7 @@
       <div id="contadorValor" class="contador-grande">0</div>
     </section>
 
-    <!-- Tabla -->
+    <!-- Tabla de historial -->
     <section class="tarjeta">
       <h2>📋 Historial</h2>
       <div class="tabla-scroll">
@@ -65,13 +67,13 @@
               {% endfor %}
               <td>
                 <form action="/editar/{{ fila['nombre'] }}" method="POST">
-                  <input type="number" step="any" name="nueva_cantidad" required placeholder="Nueva cantidad">
-                  <button type="submit">✏️</button>
+                  <input type="number" name="nueva_cantidad" step="any" required placeholder="Nueva cantidad">
+                  <button class="btn-editar" type="submit">✏️</button>
                 </form>
               </td>
               <td>
                 <form action="/eliminar/{{ fila['nombre'] }}" method="POST">
-                  <button type="submit" onclick="return confirm('¿Eliminar {{ fila['nombre'] }}?')">🗑️</button>
+                  <button class="btn-eliminar" type="submit" onclick="return confirm('¿Eliminar {{ fila['nombre'] }}?')">🗑️</button>
                 </form>
               </td>
             </tr>
@@ -79,9 +81,7 @@
           </tbody>
         </table>
       </div>
-
-      <!-- Botón Exportar -->
-      <div style="text-align: right; margin-top: 1rem;">
+      <div class="exportar-derecha">
         <a href="/exportar" class="boton-exportar">📤 Exportar a Excel</a>
       </div>
     </section>
@@ -93,7 +93,7 @@
     </section>
 
     <footer>
-      <p>🪙 Dashboard creado por Mauricio - 2025</p>
+      <p>🪙 Creado por DVR - 2025</p>
     </footer>
   </div>
 
@@ -102,15 +102,13 @@
       // Loader
       document.getElementById("loader").style.display = "none";
 
-      // Modo oscuro/claro
+      // Cambiar modo
       const body = document.body;
       const modoBtn = document.getElementById('modoBtn');
-      if (modoBtn) {
-        modoBtn.addEventListener('click', () => {
-          body.classList.toggle('modo-oscuro');
-          body.classList.toggle('modo-claro');
-        });
-      }
+      modoBtn.addEventListener('click', () => {
+        body.classList.toggle('modo-oscuro');
+        body.classList.toggle('modo-claro');
+      });
 
       // Gráfico
       const ctx = document.getElementById('graficoTotal').getContext('2d');
@@ -154,6 +152,7 @@
           }
         }, 20);
       }
+
       animarContador("contadorValor", {{ totales[-1] | default(0) }});
     });
   </script>

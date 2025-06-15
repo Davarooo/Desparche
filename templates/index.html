@@ -15,7 +15,6 @@
     <button id="modoBtn">🌗</button>
   </div>
 
-  <!-- Contenedor principal -->
   <div class="contenedor">
     <header class="cabecera-flex">
       <div>
@@ -89,7 +88,7 @@
     </footer>
   </div>
 
-  <!-- JS: Contador + Gráfico -->
+  <!-- JS: Gráfico y animación del contador -->
   <script>
     window.addEventListener("load", () => {
       document.getElementById("loader")?.remove();
@@ -144,20 +143,20 @@
     });
   </script>
 
-  <!-- ✅ Convai Assistant funcionando vía SDK ESModule -->
-  <script type="module">
-    import ConvaiClient from 'https://cdn.jsdelivr.net/npm/convai-web-sdk@latest/dist/convai-web-sdk.esm.js';
-
-    const client = new ConvaiClient({
-      apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
-      characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
-      enableAudio: true,
-      enableText: true,
-      showConvaiWidget: true,
-      enableMic: true
+  <!-- ✅ Asistente de Convai con iframe estable -->
+  <script src="https://cdn.convai.com/convai.min.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const widget = new ConvaiWidget({
+        apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
+        characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+        enableMic: true,
+        enableAudio: true,
+        enableText: true,
+        showConvaiWidget: true
+      });
+      widget.mount(document.body);
     });
-
-    client.mount(document.body);
   </script>
 
 </body>

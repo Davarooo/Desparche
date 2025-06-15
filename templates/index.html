@@ -10,7 +10,7 @@
 </head>
 <body class="modo-oscuro">
 
-  <!-- Botón flotante cambiar modo -->
+  <!-- Botón cambio de modo -->
   <div class="modo-toggle">
     <button id="modoBtn">🌗</button>
   </div>
@@ -39,13 +39,13 @@
       </form>
     </section>
 
-    <!-- Valor total animado -->
+    <!-- Valor total -->
     <section class="tarjeta">
       <h2>💰 Valor Total</h2>
       <div id="contadorValor" class="contador-grande">0</div>
     </section>
 
-    <!-- Tabla de historial -->
+    <!-- Tabla -->
     <section class="tarjeta">
       <h2>📋 Historial</h2>
       <div class="tabla-scroll">
@@ -92,6 +92,7 @@
       <canvas id="graficoTotal" height="120"></canvas>
     </section>
 
+    <!-- Footer -->
     <footer>
       <p>🪙 Creado por DVR - 2025</p>
     </footer>
@@ -99,10 +100,10 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Loader
+      // Ocultar loader
       document.getElementById("loader").style.display = "none";
 
-      // Cambiar modo
+      // Modo claro/oscuro
       const body = document.body;
       const modoBtn = document.getElementById('modoBtn');
       modoBtn.addEventListener('click', () => {

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Crypto Dashboard Moderno</title>
+  <title>Crypto Dashboard 2025</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
@@ -10,6 +10,12 @@
 </head>
 <body class="modo-oscuro">
 
+  <!-- Pantalla de carga -->
+  <div id="loader" class="loader-fondo">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Botón de modo -->
   <div class="modo-toggle">
     <button id="modoBtn">🌗 Cambiar modo</button>
   </div>
@@ -19,6 +25,27 @@
       <h1>🚀 CriptoDashboard 2025</h1>
     </header>
 
+    <!-- Formulario -->
+    <section class="tarjeta">
+      <h2>➕ Agregar criptomoneda</h2>
+      <form action="/agregar" method="POST" class="formulario">
+        <label for="nombre">Nombre (ej: bitcoin):</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="ethereum, solana...">
+
+        <label for="cantidad">Cantidad que posees:</label>
+        <input type="number" step="any" id="cantidad" name="cantidad" required placeholder="Ej: 2.5">
+
+        <button type="submit">Agregar al portafolio</button>
+      </form>
+    </section>
+
+    <!-- Valor total animado -->
+    <section class="tarjeta">
+      <h2>💰 Valor Total</h2>
+      <div id="contadorValor" class="contador-grande">0</div>
+    </section>
+
+    <!-- Tabla -->
     <section class="tarjeta">
       <h2>📋 Historial</h2>
       <div class="tabla-scroll">
@@ -41,19 +68,31 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Botón Exportar -->
+      <div style="text-align: right; margin-top: 1rem;">
+        <a href="/exportar" class="boton-exportar">📤 Exportar a Excel</a>
+      </div>
     </section>
 
+    <!-- Gráfico -->
     <section class="tarjeta">
       <h2>📈 Evolución</h2>
       <canvas id="graficoTotal" height="120"></canvas>
     </section>
 
     <footer>
-      <p>🪙 Dashboard creado por DVR- 2025</p>
+      <p>🪙 Dashboard creado por DVR - 2025</p>
     </footer>
   </div>
 
   <script>
+    // Loader
+    window.addEventListener("load", () => {
+      document.getElementById("loader").style.display = "none";
+    });
+
+    // Gráfico
     const ctx = document.getElementById('graficoTotal').getContext('2d');
     const grafico = new Chart(ctx, {
       type: 'line',
@@ -71,9 +110,7 @@
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            labels: { color: '#eee' }
-          }
+          legend: { labels: { color: '#eee' } }
         },
         scales: {
           x: { ticks: { color: '#ccc' } },
@@ -82,7 +119,24 @@
       }
     });
 
-    // Cambiar modo claro/oscuro
+    // Contador animado
+    function animarContador(id, valorFinal) {
+      let actual = 0;
+      const incremento = valorFinal / 60;
+      const el = document.getElementById(id);
+      const anim = setInterval(() => {
+        actual += incremento;
+        if (actual >= valorFinal) {
+          el.innerText = valorFinal.toLocaleString("en-US", {style: "currency", currency: "USD"});
+          clearInterval(anim);
+        } else {
+          el.innerText = actual.toLocaleString("en-US", {style: "currency", currency: "USD"});
+        }
+      }, 20);
+    }
+    animarContador("contadorValor", {{ totales[-1]|default(0) }});
+
+    // Modo oscuro/claro
     const body = document.body;
     const modoBtn = document.getElementById('modoBtn');
     modoBtn.addEventListener('click', () => {
@@ -90,5 +144,6 @@
       body.classList.toggle('modo-claro');
     });
   </script>
+
 </body>
 </html>

@@ -2,21 +2,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Iniciar sesión - CriptoDashboard</title>
+  <title>Iniciar sesión | CriptoDashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body class="modo-oscuro">
-  <div class="login-contenedor">
-    <div class="login-tarjeta glass">
-      <h1>🚀 Bienvenido</h1>
-      <p>Ingresa tu nombre para continuar al dashboard</p>
+
+  <div class="login-container">
+    <div class="login-card glass">
+      <h1>🚀 <span>Bienvenido</span></h1>
+      <p class="sub">Accede al futuro de tu portafolio digital</p>
       <form method="POST" class="formulario-login">
         <input type="text" name="nombre" placeholder="Tu nombre..." required>
         <button type="submit">Entrar</button>
       </form>
     </div>
   </div>
+
 </body>
 </html>

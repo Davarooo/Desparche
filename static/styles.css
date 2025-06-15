@@ -217,3 +217,74 @@ footer {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* LOGIN MODERNO Y LUJOSO */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top right, #0f121a, #0b0f19);
+  padding: 1rem;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0, 255, 224, 0.08);
+  animation: fadeIn 0.8s ease;
+}
+
+.login-card h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #00ffe0;
+}
+.login-card h1 span {
+  color: #fff;
+}
+.login-card .sub {
+  font-size: 1rem;
+  color: #bbb;
+  margin-bottom: 1.8rem;
+}
+
+.formulario-login input {
+  padding: 12px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #10141c;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.formulario-login button {
+  background: linear-gradient(90deg, #ffee00, #00ffe0);
+  padding: 12px;
+  width: 100%;
+  font-weight: bold;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.formulario-login button:hover {
+  filter: brightness(1.15);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

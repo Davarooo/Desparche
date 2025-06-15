@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_file
+from flask import Flask, render_template, request, redirect, make_response, send_file
 import pandas as pd
 import os
 from datetime import datetime
@@ -8,7 +8,7 @@ app = Flask(__name__)
 CSV_PATH = 'data/historial_portafolio.csv'
 COINGECKO_URL = 'https://api.coingecko.com/api/v3/simple/price'
 
-# ✅ Si no existe el CSV, crearlo con datos ejemplo
+
 def inicializar_csv():
     if not os.path.exists(CSV_PATH):
         os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
@@ -19,48 +19,62 @@ def inicializar_csv():
         ])
         ejemplo.to_csv(CSV_PATH, index=False)
 
-# ✅ Leer portafolio y validar columnas
+
 def cargar_portafolio():
     try:
         df = pd.read_csv(CSV_PATH)
         columnas_esperadas = {"nombre", "cantidad", "precio_usd", "valor_total_usd"}
         if not columnas_esperadas.issubset(df.columns):
-            raise ValueError("CSV mal estructurado. Faltan columnas esperadas.")
+            raise ValueError("CSV mal estructurado.")
         return df
-    except Exception as e:
-        print(f"⚠️ Error al procesar el CSV: {e}")
+    except:
         return pd.DataFrame(columns=["nombre", "cantidad", "precio_usd", "valor_total_usd"])
 
-# ✅ Guardar portafolio
+
 def guardar_portafolio(df):
     df.to_csv(CSV_PATH, index=False)
 
-# ✅ Obtener precios reales
+
 def obtener_precios(criptos):
-    params = {
-        'ids': ','.join(criptos),
-        'vs_currencies': 'usd'
-    }
     try:
-        r = requests.get(COINGECKO_URL, params=params)
+        r = requests.get(COINGECKO_URL, params={'ids': ','.join(criptos), 'vs_currencies': 'usd'})
         return r.json()
     except:
         return {}
 
+
 @app.route("/")
 def index():
+    user = request.cookies.get("user_name")
+    if not user:
+        return redirect("/login")
+
     inicializar_csv()
     df = cargar_portafolio()
-    if not df.empty:
-        # para animación y gráfico
-        total = df["valor_total_usd"].sum()
-        fechas = [datetime.now().strftime("%Y-%m-%d")]
-        totales = [total]
-        columnas = df.columns.tolist()
-        registros = df.to_dict(orient="records")
-    else:
-        columnas, registros, fechas, totales = [], [], [], []
-    return render_template("index.html", columnas=columnas, registros=registros, fechas=fechas, totales=totales)
+    columnas = df.columns.tolist()
+    registros = df.to_dict(orient="records")
+    fechas = [datetime.now().strftime("%Y-%m-%d")]
+    totales = [df["valor_total_usd"].sum()] if not df.empty else [0]
+
+    return render_template("index.html", columnas=columnas, registros=registros, fechas=fechas, totales=totales, user=user)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        resp = make_response(redirect("/"))
+        resp.set_cookie("user_name", nombre)
+        return resp
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    resp = make_response(redirect("/login"))
+    resp.set_cookie("user_name", "", expires=0)
+    return resp
+
 
 @app.route("/agregar", methods=["POST"])
 def agregar():
@@ -70,24 +84,23 @@ def agregar():
         cantidad = float(request.form["cantidad"])
     except:
         cantidad = 0
-
     precios = obtener_precios([nombre])
-    precio_usd = precios.get(nombre, {}).get("usd", 0)
-    total = precio_usd * cantidad
+    precio = precios.get(nombre, {}).get("usd", 0)
+    total = precio * cantidad
     nuevo = pd.DataFrame([{
         "nombre": nombre,
         "cantidad": cantidad,
-        "precio_usd": precio_usd,
+        "precio_usd": precio,
         "valor_total_usd": total
     }])
     df = pd.concat([df, nuevo], ignore_index=True)
     guardar_portafolio(df)
     return redirect("/")
 
+
 @app.route("/editar/<nombre>", methods=["POST"])
 def editar(nombre):
     df = cargar_portafolio()
-    nombre = nombre.lower()
     nueva = float(request.form["nueva_cantidad"])
     precios = obtener_precios([nombre])
     precio = precios.get(nombre, {}).get("usd", 0)
@@ -97,6 +110,7 @@ def editar(nombre):
     guardar_portafolio(df)
     return redirect("/")
 
+
 @app.route("/eliminar/<nombre>", methods=["POST"])
 def eliminar(nombre):
     df = cargar_portafolio()
@@ -104,9 +118,11 @@ def eliminar(nombre):
     guardar_portafolio(df)
     return redirect("/")
 
+
 @app.route("/exportar")
 def exportar():
     return send_file(CSV_PATH, as_attachment=True)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

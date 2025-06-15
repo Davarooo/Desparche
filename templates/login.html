@@ -2,76 +2,86 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login CriptoDashboard</title>
+  <title>Login - DVR Cripto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
     body {
-      margin: 0;
-      background: radial-gradient(circle at top, #0f0c29, #302b63, #24243e);
+      background-color: #0f1117;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
       font-family: 'Poppins', sans-serif;
-      color: white;
+      margin: 0;
     }
+
     .login-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 224, 0.2);
+      backdrop-filter: blur(8px);
       border-radius: 20px;
-      backdrop-filter: blur(16px);
       padding: 3rem 2rem;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(0,255,224,0.1);
-      width: 90%;
+      width: 100%;
       max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.15);
     }
+
     .login-box h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
       color: #00ffe0;
+      margin-bottom: 1.5rem;
     }
+
     .login-box input {
       width: 100%;
-      padding: 12px;
+      padding: 0.75rem;
+      border-radius: 12px;
       border: none;
-      border-radius: 10px;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
       font-size: 1rem;
-      background: #111;
-      color: white;
+      background-color: #1a1c23;
+      color: #eee;
     }
+
     .login-box button {
-      width: 100%;
-      padding: 12px;
+      background-color: #00ffe0;
+      color: #0f1117;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 12px;
       font-size: 1rem;
       font-weight: bold;
-      background: linear-gradient(to right, #ffee00, #00ffe0);
-      color: black;
-      border: none;
-      border-radius: 10px;
       cursor: pointer;
-      transition: 0.3s ease;
+      transition: 0.3s;
     }
+
     .login-box button:hover {
-      filter: brightness(1.2);
+      background-color: #00ddc5;
     }
-    footer {
-      margin-top: 2rem;
-      font-size: 0.8rem;
-      color: #ccc;
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .login-footer strong {
+      color: #00ffe0;
     }
   </style>
 </head>
 <body>
-  <form method="POST" class="login-box">
-    <h2>Bienvenido a DVR Cripto</h2>
-    <input type="text" name="nombre" placeholder="Tu nombre" required>
-    <button type="submit">Entrar al Dashboard</button>
-    <footer>🪙 Dashboard creado por DVR - 2025</footer>
-  </form>
+  <div class="login-box">
+    <h2>Bienvenido a DVR</h2>
+    <form method="POST">
+      <input type="text" name="nombre" placeholder="Ingresa tu nombre" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <div class="login-footer">🚀 Dashboard Web3 creado por <strong>DVR</strong></div>
+  </div>
 </body>
 </html>

@@ -8,20 +8,11 @@ app = Flask(__name__)
 app.secret_key = 'clave-super-secreta'
 DATA_PATH = 'data/historial_portafolio.csv'
 
-# Crear archivo CSV con columnas si no existe
 def crear_archivo_si_no_existe():
-    columnas = ["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"]
     if not os.path.exists(DATA_PATH):
-        df = pd.DataFrame(columns=columnas)
-        df.to_csv(DATA_PATH, index=False)
-    else:
-        df = pd.read_csv(DATA_PATH)
-        for col in columnas:
-            if col not in df.columns:
-                df[col] = None
+        df = pd.DataFrame(columns=["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"])
         df.to_csv(DATA_PATH, index=False)
 
-# Obtener precio desde CoinGecko
 def obtener_precio(nombre):
     try:
         r = requests.get(f"https://api.coingecko.com/api/v3/simple/price?ids={nombre}&vs_currencies=usd")
@@ -35,22 +26,19 @@ def home():
         return redirect(url_for('login'))
 
     crear_archivo_si_no_existe()
-    df = pd.read_csv(DATA_PATH).dropna()
+    df = pd.read_csv(DATA_PATH)
 
-    columnas = ["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"]
-    for col in columnas:
-        if col not in df.columns:
-            df[col] = None
-
+    df.dropna(inplace=True)
     df.to_csv(DATA_PATH, index=False)
+
+    columnas = df.columns.tolist()
     registros = df.to_dict(orient='records')
 
-    try:
+    if 'fecha' in df.columns and 'valor_total_usd' in df.columns:
         totales = df.groupby('fecha')['valor_total_usd'].sum().round(2).tolist()
         fechas = df['fecha'].unique().tolist()
-    except:
-        totales = []
-        fechas = []
+    else:
+        totales, fechas = [], []
 
     return render_template("index.html", user=session['usuario'],
                            columnas=columnas, registros=registros,
@@ -77,22 +65,23 @@ def agregar():
     precio = obtener_precio(nombre)
 
     if precio is None:
-        return "❌ Error al obtener el precio"
+        return "Error al obtener el precio"
 
     total = round(precio * cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
 
     nuevo = pd.DataFrame([{
-        "fecha": hoy,
-        "nombre": nombre,
-        "cantidad": cantidad,
-        "precio_usd": precio,
-        "valor_total_usd": total
+        'fecha': hoy,
+        'nombre': nombre,
+        'cantidad': cantidad,
+        'precio_usd': precio,
+        'valor_total_usd': total
     }])
 
-    df = pd.read_csv(DATA_PATH)
-    df = pd.concat([df, nuevo], ignore_index=True)
-    df.to_csv(DATA_PATH, index=False)
+    if not nuevo.isnull().values.any():
+        df = pd.read_csv(DATA_PATH)
+        df = pd.concat([df, nuevo], ignore_index=True)
+        df.to_csv(DATA_PATH, index=False)
 
     return redirect(url_for('home'))
 
@@ -100,8 +89,9 @@ def agregar():
 def editar(nombre):
     nueva_cantidad = float(request.form.get('nueva_cantidad'))
     precio = obtener_precio(nombre)
+
     if precio is None:
-        return "❌ Error con precio"
+        return "Error con el precio"
 
     total = round(precio * nueva_cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
@@ -110,14 +100,16 @@ def editar(nombre):
     df = df[df['nombre'] != nombre]
 
     nuevo = pd.DataFrame([{
-        "fecha": hoy,
-        "nombre": nombre,
-        "cantidad": nueva_cantidad,
-        "precio_usd": precio,
-        "valor_total_usd": total
+        'fecha': hoy,
+        'nombre': nombre,
+        'cantidad': nueva_cantidad,
+        'precio_usd': precio,
+        'valor_total_usd': total
     }])
-    df = pd.concat([df, nuevo], ignore_index=True)
-    df.to_csv(DATA_PATH, index=False)
+
+    if not nuevo.isnull().values.any():
+        df = pd.concat([df, nuevo], ignore_index=True)
+        df.to_csv(DATA_PATH, index=False)
 
     return redirect(url_for('home'))
 

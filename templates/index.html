@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="modo-oscuro">
+
   <div class="modo-toggle">
     <button id="modoBtn">🌗</button>
   </div>
@@ -86,7 +87,7 @@
     </footer>
   </div>
 
-  <!-- Scripts -->
+  <!-- JS: Animaciones y gráfico -->
   <script>
     window.addEventListener("load", () => {
       document.getElementById("loader")?.remove();
@@ -141,18 +142,21 @@
     });
   </script>
 
-  <!-- Convai SDK -->
-  <script type="module">
-    import ConvaiClient from 'https://cdn.jsdelivr.net/npm/convai-web-sdk@latest/dist/convai-web-sdk.esm.js';
-    const convaiClient = new ConvaiClient({
-      apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
-      characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
-      enableAudio: true,
-      enableText: true,
-      showConvaiWidget: true,
-      enableMic: true
+  <!-- ✅ Convai Widget Clásico FUNCIONAL -->
+  <script src="https://cdn.convai.com/convai.min.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      const client = new ConvaiClient({
+        apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
+        characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+        enableAudio: true,
+        enableText: true,
+        showConvaiWidget: true,
+        enableMic: true
+      });
+      client.mount(document.body);
     });
-    convaiClient.mount(document.body);
   </script>
+
 </body>
 </html>

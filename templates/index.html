@@ -143,21 +143,20 @@
     });
   </script>
 
-  <!-- ✅ Asistente de Convai con iframe estable -->
-  <script src="https://cdn.convai.com/convai.min.js"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const widget = new ConvaiWidget({
-        apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
-        characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
-        enableMic: true,
-        enableAudio: true,
-        enableText: true,
-        showConvaiWidget: true
-      });
-      widget.mount(document.body);
-    });
-  </script>
+  <!-- ✅ Convai Web Assistant usando SDK ESModule (comprobado en Render) -->
+<script type="module">
+  import ConvaiClient from 'https://cdn.jsdelivr.net/npm/convai-web-sdk@1.0.27/dist/convai-web-sdk.esm.js';
 
-</body>
-</html>
+  const client = new ConvaiClient({
+    apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
+    characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+    enableMic: true,
+    enableAudio: true,
+    enableText: true,
+    showConvaiWidget: true,
+    voiceProvider: 'default' // fuerza a usar el motor estándar de voz
+  });
+
+  client.mount(document.body);
+</script>
+

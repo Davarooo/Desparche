@@ -1,76 +1,147 @@
-/* Estilo general */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Tipografía y base */
 body {
+  margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
-  color: #f1f1f1;
-  min-height: 100vh;
-  padding: 2rem;
+  background-color: #0c0c0c;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Login */
+h1, h2, h3 {
+  font-family: 'Orbitron', sans-serif;
+  margin: 0.5rem 0;
+}
+
+a {
+  color: #00ffe0;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00ffe0, #00b3a1);
+  color: #000;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #00b3a1, #00ffe0);
+}
+
+/* Layout */
+.contenedor {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
 .contenedor-login {
   max-width: 400px;
-  margin: 80px auto;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2rem;
-  border-radius: 1.5rem;
-  backdrop-filter: blur(15px);
+  margin: 100px auto;
   text-align: center;
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+  padding: 2rem;
+  background: #111;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 255, 224, 0.1);
 }
 
-.contenedor-login h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #00ffe0;
-}
-
-.contenedor-login p {
-  font-size: 1rem;
-  color: #ccc;
-  margin-bottom: 1.5rem;
-}
-
-.formulario-login input {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 10px;
-  border: none;
-  margin-bottom: 1rem;
-  background-color: #222;
-  color: #fff;
+/* Formulario */
+.formulario-login input,
+.formulario input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  margin-right: 10px;
   font-size: 1rem;
 }
 
 .formulario-login button {
-  width: 100%;
-  padding: 0.9rem;
-  font-size: 1rem;
-  background: #00ffe0;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  margin-top: 1rem;
 }
 
-.formulario-login button:hover {
-  background: #00ccaa;
+/* Cabecera */
+.cabecera-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.boton-salir {
+  background: #ff4d4d;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+/* Tarjetas */
+.tarjeta {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 255, 224, 0.05);
+}
+
+.glass {
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 255, 224, 0.1);
+}
+
+/* Contador */
+.contador-grande {
+  font-size: 2rem;
+  color: #00ffe0;
+  font-family: 'Orbitron', sans-serif;
+  margin-top: 1rem;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+th {
+  background-color: #00ffe0;
+  color: #000;
+  font-weight: bold;
+}
+
+td button {
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .contenedor-login {
-    margin: 2rem;
-    padding: 1.5rem;
+  .cabecera-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .formulario input {
+    width: 100%;
+    margin-right: 0;
   }
 }

@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="modo-oscuro">
 
+  <!-- Login -->
   <div class="contenedor-login" id="login">
-    <h1>DVR CriptoDashboard</h1>
+    <h1>🚀 DVR CriptoDashboard</h1>
     <p>Bienvenido a tu portafolio Web3</p>
     <form class="formulario-login" onsubmit="iniciarSesion(event)">
       <input type="text" id="usuario" placeholder="Tu nombre" required />
@@ -19,6 +20,7 @@
     </form>
   </div>
 
+  <!-- Dashboard -->
   <div class="contenedor" id="dashboard" style="display: none;">
     <header class="cabecera-flex">
       <div>
@@ -59,6 +61,7 @@
     </section>
   </div>
 
+  <!-- Scripts -->
   <script>
     const API_URL = "https://api.coingecko.com/api/v3/simple/price?ids=";
     const STORAGE_KEY = "portafolioDVR";
@@ -139,10 +142,26 @@
       cargarPortafolio();
     }
 
-    // Carga automática si ya está logueado
     window.onload = () => {
       if (localStorage.getItem("usuario")) mostrarDashboard();
     };
   </script>
+
+  <!-- ✅ Asistente Convai -->
+  <script type="module">
+    import ConvaiClient from 'https://cdn.jsdelivr.net/npm/convai-web-sdk@latest/dist/convai-web-sdk.esm.js';
+
+    const client = new ConvaiClient({
+      apikey: 'c1fc55dc06242d8b2bb25f9645def488',
+      characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
+      enableAudio: true,
+      enableText: true,
+      enableMic: true,
+      showConvaiWidget: true
+    });
+
+    client.mount(document.body);
+  </script>
+
 </body>
 </html>

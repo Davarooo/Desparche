@@ -112,3 +112,27 @@ def editar(nombre):
     }])
 
     if not nuevo.isnull().values.any():
+        df = pd.concat([df, nuevo], ignore_index=True)
+        df.to_csv(DATA_PATH, index=False)
+
+    return redirect(url_for('home'))
+
+# 🟢 Eliminar cripto
+@app.route('/eliminar/<nombre>', methods=['POST'])
+def eliminar(nombre):
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['nombre'] != nombre]
+    df.to_csv(DATA_PATH, index=False)
+    return redirect(url_for('home'))
+
+# 🟢 Exportar a Excel
+@app.route('/exportar')
+def exportar():
+    df = pd.read_csv(DATA_PATH)
+    path = 'data/portafolio_exportado.xlsx'
+    df.to_excel(path, index=False)
+    return send_file(path, as_attachment=True)
+
+# 🟢 Ejecutar app
+if __name__ == '__main__':
+    app.run(debug=True)

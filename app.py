@@ -8,13 +8,13 @@ app = Flask(__name__)
 app.secret_key = 'clave-super-secreta'
 DATA_PATH = 'data/historial_portafolio.csv'
 
+# Crear CSV inicial
 def crear_archivo_si_no_existe():
-    if not os.path.exists('data'):
-        os.makedirs('data')
     if not os.path.exists(DATA_PATH):
         df = pd.DataFrame(columns=["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"])
         df.to_csv(DATA_PATH, index=False)
 
+# Obtener precio en tiempo real desde CoinGecko
 def obtener_precio(nombre):
     try:
         r = requests.get(f"https://api.coingecko.com/api/v3/simple/price?ids={nombre}&vs_currencies=usd")
@@ -30,7 +30,6 @@ def home():
     crear_archivo_si_no_existe()
     df = pd.read_csv(DATA_PATH)
     df.dropna(inplace=True)
-    df.to_csv(DATA_PATH, index=False)
 
     columnas = df.columns.tolist()
     registros = df.to_dict(orient='records')
@@ -65,8 +64,9 @@ def agregar():
     nombre = request.form.get('nombre').lower()
     cantidad = float(request.form.get('cantidad'))
     precio = obtener_precio(nombre)
+
     if precio is None:
-        return "Error al obtener el precio de CoinGecko"
+        return "Error al obtener precio de CoinGecko"
 
     total = round(precio * cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
@@ -91,10 +91,10 @@ def editar(nombre):
     nueva_cantidad = float(request.form.get('nueva_cantidad'))
     precio = obtener_precio(nombre)
     if precio is None:
-        return "Error al obtener el precio"
+        return "Error precio"
+
     total = round(precio * nueva_cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
-
     df = pd.read_csv(DATA_PATH)
     df = df[df['nombre'] != nombre]
 
@@ -106,10 +106,8 @@ def editar(nombre):
         'valor_total_usd': total
     }])
 
-    if not nuevo.isnull().values.any():
-        df = pd.concat([df, nuevo], ignore_index=True)
-        df.to_csv(DATA_PATH, index=False)
-
+    df = pd.concat([df, nuevo], ignore_index=True)
+    df.to_csv(DATA_PATH, index=False)
     return redirect(url_for('home'))
 
 @app.route('/eliminar/<nombre>', methods=['POST'])

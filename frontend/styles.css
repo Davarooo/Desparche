@@ -1,205 +1,76 @@
+/* Estilo general */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  margin: 0;
   font-family: 'Poppins', sans-serif;
-  background-color: #0f1117;
-  color: #f4f4f4;
-  transition: background-color 0.3s, color 0.3s;
+  background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
+  color: #f1f1f1;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
-.modo-claro {
-  background-color: #ffffff;
-  color: #1a1a1a;
-}
-
-.loader-fondo {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: #0f1117;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.loader-spinner {
-  border: 6px solid #fff;
-  border-top: 6px solid #00ffe0;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.modo-toggle {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 10000;
-}
-.modo-toggle button {
-  background: transparent;
-  border: 2px solid #00ffe0;
-  color: #00ffe0;
-  font-size: 18px;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.modo-toggle button:hover {
-  background-color: #00ffe0;
-  color: #0f1117;
-}
-
-.contenedor {
-  max-width: 1200px;
-  margin: auto;
-  padding: 1rem;
-}
-
-.cabecera-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.saludo-usuario {
-  font-weight: 500;
-  color: #00ffe0;
-  margin: 0;
-}
-
-.boton-salir {
-  color: #00ffe0;
-  text-decoration: none;
-  padding: 6px 12px;
-  border: 1px solid #00ffe0;
-  border-radius: 6px;
-  transition: 0.3s;
-}
-.boton-salir:hover {
-  background-color: #00ffe0;
-  color: #0f1117;
-}
-
-.tarjeta {
-  background: #1a1c23;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 0 25px rgba(0, 255, 224, 0.1);
-}
-
-.glass {
+/* Login */
+.contenedor-login {
+  max-width: 400px;
+  margin: 80px auto;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0, 255, 224, 0.2);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(15px);
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
 }
 
-.formulario input,
-.formulario button {
+.contenedor-login h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #00ffe0;
+}
+
+.contenedor-login p {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.formulario-login input {
   width: 100%;
-  margin-top: 0.8rem;
-  padding: 0.75rem;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 1rem;
+  background-color: #222;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.formulario-login button {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  background: #00ffe0;
+  color: #000;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
-}
-
-.formulario input {
-  background: #2a2d38;
-  color: #eee;
-}
-
-.formulario button {
-  background: #00ffe0;
-  color: #0f1117;
-  font-weight: 600;
   cursor: pointer;
-}
-.formulario button:hover {
-  background: #00ddc5;
+  transition: background 0.3s ease;
 }
 
-.contador-grande {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #00ffe0;
-  text-align: center;
-  margin-top: 1rem;
+.formulario-login button:hover {
+  background: #00ccaa;
 }
 
-.tabla-scroll {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-th, td {
-  padding: 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-th {
-  color: #00ffe0;
-}
-
-.btn-editar,
-.btn-eliminar {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.btn-editar {
-  background-color: #ffc107;
-  color: #000;
-}
-.btn-eliminar {
-  background-color: #dc3545;
-  color: #fff;
-}
-.btn-editar:hover {
-  background-color: #e0a800;
-}
-.btn-eliminar:hover {
-  background-color: #c82333;
-}
-
-.boton-exportar {
-  background: #00ffe0;
-  color: #0f1117;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  display: inline-block;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.boton-exportar:hover {
-  background-color: #00ddc5;
-}
-
-.exportar-derecha {
-  text-align: right;
-  margin-top: 1rem;
-}
-
-footer {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  color: #888;
+/* Responsive */
+@media (max-width: 600px) {
+  .contenedor-login {
+    margin: 2rem;
+    padding: 1.5rem;
+  }
 }

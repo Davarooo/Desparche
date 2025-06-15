@@ -1,113 +1,148 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Crypto Dashboard DVR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CriptoDashboard DVR</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="modo-oscuro">
+<body>
 
-  <!-- Botón modo -->
-  <div class="modo-toggle">
-    <button id="modoBtn">🌗</button>
+  <div class="contenedor-login" id="login">
+    <h1>DVR CriptoDashboard</h1>
+    <p>Bienvenido a tu portafolio Web3</p>
+    <form class="formulario-login" onsubmit="iniciarSesion(event)">
+      <input type="text" id="usuario" placeholder="Tu nombre" required />
+      <button type="submit">Ingresar</button>
+    </form>
   </div>
 
-  <div class="contenedor">
+  <div class="contenedor" id="dashboard" style="display: none;">
     <header class="cabecera-flex">
       <div>
-        <h1>🚀 Crypto Dashboard 2025</h1>
-        <p class="saludo-usuario">Hola, Daniel 👋</p>
+        <h2>Hola, <span id="nombreUsuario"></span> 👋</h2>
+        <p>Tu portafolio en tiempo real</p>
       </div>
+      <button onclick="cerrarSesion()" class="boton-salir">Cerrar sesión</button>
     </header>
 
-    <!-- Sección Valor Total -->
+    <section class="tarjeta glass">
+      <h2>➕ Agregar Criptomoneda</h2>
+      <form onsubmit="agregarCripto(event)" class="formulario">
+        <input type="text" id="nombre" placeholder="Nombre (ej: bitcoin)" required />
+        <input type="number" id="cantidad" step="any" placeholder="Cantidad que posees" required />
+        <button type="submit">Agregar</button>
+      </form>
+    </section>
+
     <section class="tarjeta glass">
       <h2>💰 Valor Total</h2>
-      <div id="contadorValor" class="contador-grande">$0</div>
+      <div id="valorTotal" class="contador-grande">$0</div>
     </section>
 
-    <!-- Sección Gráfico -->
     <section class="tarjeta glass">
-      <h2>📈 Evolución</h2>
-      <canvas id="graficoTotal" height="120"></canvas>
+      <h2>📋 Historial</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio USD</th>
+            <th>Total USD</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+      </table>
     </section>
-
-    <footer>
-      <p>🪙 Creado por <strong>DVR</strong> - 2025</p>
-    </footer>
   </div>
 
-  <!-- JS: Dark mode + Gráfico + Animación -->
   <script>
-    // Alternancia modo oscuro/claro
-    document.getElementById("modoBtn").addEventListener("click", () => {
-      document.body.classList.toggle("modo-oscuro");
-      document.body.classList.toggle("modo-claro");
-    });
+    const API_URL = "https://api.coingecko.com/api/v3/simple/price?ids=";
+    const STORAGE_KEY = "portafolioDVR";
 
-    // Contador animado
-    function animarContador(id, valorFinal) {
-      let actual = 0;
-      const incremento = valorFinal / 60;
-      const el = document.getElementById(id);
-      const anim = setInterval(() => {
-        actual += incremento;
-        if (actual >= valorFinal) {
-          el.innerText = valorFinal.toLocaleString("en-US", { style: "currency", currency: "USD" });
-          clearInterval(anim);
-        } else {
-          el.innerText = actual.toLocaleString("en-US", { style: "currency", currency: "USD" });
-        }
-      }, 20);
-    }
-    animarContador("contadorValor", 15321.75); // puedes cambiar el valor real
-
-    // Gráfico con datos simulados
-    const ctx = document.getElementById('graficoTotal').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ["2025-06-13", "2025-06-14", "2025-06-15"],
-        datasets: [{
-          label: 'Valor Total USD',
-          data: [8300, 12200, 15321.75],
-          borderColor: '#00ffe0',
-          backgroundColor: 'rgba(0,255,224,0.1)',
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: '#eee' } }
-        },
-        scales: {
-          x: { ticks: { color: '#ccc' } },
-          y: { ticks: { color: '#ccc' } }
-        }
+    function iniciarSesion(e) {
+      e.preventDefault();
+      const nombre = document.getElementById("usuario").value.trim();
+      if (nombre) {
+        localStorage.setItem("usuario", nombre);
+        mostrarDashboard();
       }
-    });
-  </script>
+    }
 
-  <!-- ✅ Asistente Convai incorporado -->
-  <script src="https://cdn.convai.com/convai.min.js"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const widget = new ConvaiWidget({
-        apiKey: 'c1fc55dc06242d8b2bb25f9645def488',
-        characterId: 'b947ea32-49fb-11f0-b2f3-42010a7be01f',
-        enableMic: true,
-        enableAudio: true,
-        enableText: true,
-        showConvaiWidget: true
+    function cerrarSesion() {
+      localStorage.clear();
+      location.reload();
+    }
+
+    function mostrarDashboard() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("nombreUsuario").innerText = localStorage.getItem("usuario");
+      cargarPortafolio();
+    }
+
+    async function agregarCripto(e) {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value.toLowerCase();
+      const cantidad = parseFloat(document.getElementById("cantidad").value);
+      try {
+        const r = await fetch(`${API_URL}${nombre}&vs_currencies=usd`);
+        const data = await r.json();
+        const precio = data[nombre]?.usd;
+        if (!precio) throw new Error("Cripto no encontrada");
+
+        const total = +(cantidad * precio).toFixed(2);
+        const nuevo = { nombre, cantidad, precio, total };
+
+        const portafolio = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        portafolio.push(nuevo);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(portafolio));
+        cargarPortafolio();
+        document.getElementById("nombre").value = "";
+        document.getElementById("cantidad").value = "";
+      } catch {
+        alert("❌ Error al obtener datos. Intenta con otro nombre.");
+      }
+    }
+
+    function cargarPortafolio() {
+      const portafolio = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const tabla = document.getElementById("tablaBody");
+      tabla.innerHTML = "";
+      let totalUSD = 0;
+
+      portafolio.forEach((cripto, index) => {
+        totalUSD += cripto.total;
+        const row = `<tr>
+          <td>${cripto.nombre}</td>
+          <td>${cripto.cantidad}</td>
+          <td>$${cripto.precio}</td>
+          <td>$${cripto.total}</td>
+          <td><button onclick="eliminarCripto(${index})">🗑️</button></td>
+        </tr>`;
+        tabla.innerHTML += row;
       });
-      widget.mount(document.body);
-    });
-  </script>
 
+      document.getElementById("valorTotal").innerText = totalUSD.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    }
+
+    function eliminarCripto(index) {
+      const portafolio = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      portafolio.splice(index, 1);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(portafolio));
+      cargarPortafolio();
+    }
+
+    // Carga automática si ya está logueado
+    window.onload = () => {
+      if (localStorage.getItem("usuario")) mostrarDashboard();
+    };
+  </script>
 </body>
 </html>

@@ -9,13 +9,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="modo-oscuro">
-
   <!-- Pantalla de carga -->
   <div id="loader" class="loader-fondo">
     <div class="loader-spinner"></div>
   </div>
 
-  <!-- Botón de modo -->
   <div class="modo-toggle">
     <button id="modoBtn">🌗 Cambiar modo</button>
   </div>
@@ -55,6 +53,8 @@
               {% for col in columnas %}
               <th>{{ col }}</th>
               {% endfor %}
+              <th>Editar</th>
+              <th>Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -63,6 +63,17 @@
               {% for col in columnas %}
               <td>{{ fila[col] }}</td>
               {% endfor %}
+              <td>
+                <form action="/editar/{{ fila['nombre'] }}" method="POST">
+                  <input type="number" step="any" name="nueva_cantidad" required placeholder="Nueva cantidad">
+                  <button type="submit">✏️</button>
+                </form>
+              </td>
+              <td>
+                <form action="/eliminar/{{ fila['nombre'] }}" method="POST">
+                  <button type="submit" onclick="return confirm('¿Eliminar {{ fila['nombre'] }}?')">🗑️</button>
+                </form>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -82,68 +93,69 @@
     </section>
 
     <footer>
-      <p>🪙 Dashboard creado por DVR - 2025</p>
+      <p>🪙 Dashboard creado por Mauricio - 2025</p>
     </footer>
   </div>
 
   <script>
-    // Loader
-    window.addEventListener("load", () => {
+    document.addEventListener("DOMContentLoaded", () => {
+      // Loader
       document.getElementById("loader").style.display = "none";
-    });
 
-    // Gráfico
-    const ctx = document.getElementById('graficoTotal').getContext('2d');
-    const grafico = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: {{ fechas | tojson }},
-        datasets: [{
-          label: 'Valor Total USD',
-          data: {{ totales | tojson }},
-          borderColor: '#00ffe0',
-          backgroundColor: 'rgba(0,255,224,0.1)',
-          tension: 0.4,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: '#eee' } }
-        },
-        scales: {
-          x: { ticks: { color: '#ccc' } },
-          y: { ticks: { color: '#ccc' } }
-        }
+      // Modo oscuro/claro
+      const body = document.body;
+      const modoBtn = document.getElementById('modoBtn');
+      if (modoBtn) {
+        modoBtn.addEventListener('click', () => {
+          body.classList.toggle('modo-oscuro');
+          body.classList.toggle('modo-claro');
+        });
       }
-    });
 
-    // Contador animado
-    function animarContador(id, valorFinal) {
-      let actual = 0;
-      const incremento = valorFinal / 60;
-      const el = document.getElementById(id);
-      const anim = setInterval(() => {
-        actual += incremento;
-        if (actual >= valorFinal) {
-          el.innerText = valorFinal.toLocaleString("en-US", {style: "currency", currency: "USD"});
-          clearInterval(anim);
-        } else {
-          el.innerText = actual.toLocaleString("en-US", {style: "currency", currency: "USD"});
+      // Gráfico
+      const ctx = document.getElementById('graficoTotal').getContext('2d');
+      const grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ fechas | tojson }},
+          datasets: [{
+            label: 'Valor Total USD',
+            data: {{ totales | tojson }},
+            borderColor: '#00ffe0',
+            backgroundColor: 'rgba(0,255,224,0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#eee' } }
+          },
+          scales: {
+            x: { ticks: { color: '#ccc' } },
+            y: { ticks: { color: '#ccc' } }
+          }
         }
-      }, 20);
-    }
-    animarContador("contadorValor", {{ totales[-1]|default(0) }});
+      });
 
-    // Modo oscuro/claro
-    const body = document.body;
-    const modoBtn = document.getElementById('modoBtn');
-    modoBtn.addEventListener('click', () => {
-      body.classList.toggle('modo-oscuro');
-      body.classList.toggle('modo-claro');
+      // Contador animado
+      function animarContador(id, valorFinal) {
+        let actual = 0;
+        const incremento = valorFinal / 60;
+        const el = document.getElementById(id);
+        const anim = setInterval(() => {
+          actual += incremento;
+          if (actual >= valorFinal) {
+            el.innerText = valorFinal.toLocaleString("en-US", { style: "currency", currency: "USD" });
+            clearInterval(anim);
+          } else {
+            el.innerText = actual.toLocaleString("en-US", { style: "currency", currency: "USD" });
+          }
+        }, 20);
+      }
+      animarContador("contadorValor", {{ totales[-1] | default(0) }});
     });
   </script>
-
 </body>
 </html>

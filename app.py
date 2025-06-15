@@ -8,19 +8,14 @@ DATA_PATH = "data/historial_portafolio.csv"
 COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price"
 COLUMNAS_REQUERIDAS = ["nombre", "cantidad", "precio_usd", "valor_total_usd"]
 
-# Función para obtener precio desde CoinGecko
 def obtener_precio(nombre):
     try:
-        res = requests.get(COINGECKO_API, params={
-            "ids": nombre,
-            "vs_currencies": "usd"
-        })
+        res = requests.get(COINGECKO_API, params={"ids": nombre, "vs_currencies": "usd"})
         data = res.json()
         return data[nombre]["usd"]
     except:
         return None
 
-# Página principal
 @app.route("/")
 def index():
     if not os.path.exists(DATA_PATH) or os.stat(DATA_PATH).st_size == 0:
@@ -29,7 +24,7 @@ def index():
     try:
         df = pd.read_csv(DATA_PATH)
 
-        # Validación de columnas necesarias
+        # Validar columnas
         for col in COLUMNAS_REQUERIDAS:
             if col not in df.columns:
                 raise ValueError(f"Falta columna: {col}")
@@ -46,16 +41,13 @@ def index():
 
     return render_template("index.html", columnas=COLUMNAS_REQUERIDAS, registros=registros, fechas=fechas, totales=totales)
 
-# Agregar criptomoneda
 @app.route("/agregar", methods=["POST"])
 def agregar():
     nombre = request.form["nombre"].lower()
     cantidad = float(request.form["cantidad"])
     precio = obtener_precio(nombre)
-
     if not precio:
-        return "❌ No se pudo obtener el precio de CoinGecko."
-
+        return "❌ Error: CoinGecko no devolvió precio válido."
     valor_total = cantidad * precio
 
     if os.path.exists(DATA_PATH):
@@ -83,27 +75,21 @@ def agregar():
     df.to_csv(DATA_PATH, index=False)
     return redirect("/")
 
-# Editar cantidad
 @app.route("/editar/<nombre>", methods=["POST"])
 def editar(nombre):
     nueva = float(request.form["nueva_cantidad"])
     df = pd.read_csv(DATA_PATH)
-
     if nombre not in df["nombre"].values:
-        return "❌ Cripto no encontrada"
-
+        return "❌ No se encontró esa criptomoneda."
     precio = obtener_precio(nombre)
     if not precio:
-        return "❌ Precio no encontrado"
-
+        return "❌ Precio no disponible."
     df.loc[df["nombre"] == nombre, "cantidad"] = nueva
     df.loc[df["nombre"] == nombre, "precio_usd"] = precio
     df.loc[df["nombre"] == nombre, "valor_total_usd"] = nueva * precio
-
     df.to_csv(DATA_PATH, index=False)
     return redirect("/")
 
-# Eliminar cripto
 @app.route("/eliminar/<nombre>", methods=["POST"])
 def eliminar(nombre):
     df = pd.read_csv(DATA_PATH)
@@ -111,7 +97,6 @@ def eliminar(nombre):
     df.to_csv(DATA_PATH, index=False)
     return redirect("/")
 
-# Exportar a Excel
 @app.route("/exportar")
 def exportar():
     excel_path = "data/reporte_portafolio.xlsx"
@@ -119,6 +104,5 @@ def exportar():
     df.to_excel(excel_path, index=False)
     return send_file(excel_path, as_attachment=True)
 
-# Ejecutar local
 if __name__ == "__main__":
     app.run(debug=True)

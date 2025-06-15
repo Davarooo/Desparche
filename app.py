@@ -9,6 +9,8 @@ app.secret_key = 'clave-super-secreta'
 DATA_PATH = 'data/historial_portafolio.csv'
 
 def crear_archivo_si_no_existe():
+    if not os.path.exists('data'):
+        os.makedirs('data')
     if not os.path.exists(DATA_PATH):
         df = pd.DataFrame(columns=["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"])
         df.to_csv(DATA_PATH, index=False)
@@ -27,7 +29,6 @@ def home():
 
     crear_archivo_si_no_existe()
     df = pd.read_csv(DATA_PATH)
-
     df.dropna(inplace=True)
     df.to_csv(DATA_PATH, index=False)
 
@@ -38,7 +39,8 @@ def home():
         totales = df.groupby('fecha')['valor_total_usd'].sum().round(2).tolist()
         fechas = df['fecha'].unique().tolist()
     else:
-        totales, fechas = [], []
+        totales = []
+        fechas = []
 
     return render_template("index.html", user=session['usuario'],
                            columnas=columnas, registros=registros,
@@ -63,9 +65,8 @@ def agregar():
     nombre = request.form.get('nombre').lower()
     cantidad = float(request.form.get('cantidad'))
     precio = obtener_precio(nombre)
-
     if precio is None:
-        return "Error al obtener el precio"
+        return "Error al obtener el precio de CoinGecko"
 
     total = round(precio * cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
@@ -89,10 +90,8 @@ def agregar():
 def editar(nombre):
     nueva_cantidad = float(request.form.get('nueva_cantidad'))
     precio = obtener_precio(nombre)
-
     if precio is None:
-        return "Error con el precio"
-
+        return "Error al obtener el precio"
     total = round(precio * nueva_cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
 

@@ -1,47 +1,21 @@
-/* FUENTE Y BASE */
+/* Tipografía y fondo */
 body {
-  font-family: 'Orbitron', sans-serif;
-  margin: 0;
+  font-family: 'Poppins', sans-serif;
   background-color: #0b0f19;
   color: #f0f0f0;
+  margin: 0;
 }
 .modo-claro {
-  background-color: #f9f9f9;
+  background-color: #f5f5f5;
   color: #111;
 }
-
-/* CONTENEDOR PRINCIPAL */
 .contenedor {
   max-width: 1080px;
   margin: 80px auto 40px;
   padding: 2rem;
 }
 
-/* CABECERA */
-.cabecera-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.saludo-usuario {
-  font-size: 1rem;
-  color: #aaa;
-}
-.boton-salir {
-  background-color: #ff4b4b;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.boton-salir:hover {
-  background-color: #d13636;
-}
-
-/* MODO OSCURO/CLARO TOGGLE */
+/* Botón modo claro/oscuro */
 .modo-toggle {
   position: fixed;
   top: 15px;
@@ -59,21 +33,47 @@ body {
   cursor: pointer;
 }
 
-/* TARJETAS DE SECCIÓN */
-.tarjeta {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+/* Estilo glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  padding: 1.8rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 12px rgba(0, 255, 224, 0.05);
-}
-.modo-claro .tarjeta {
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 30px rgba(0, 255, 224, 0.08);
 }
 
-/* FORMULARIO */
+/* Cabecera y sesión */
+.cabecera-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.saludo-usuario {
+  font-size: 1rem;
+  color: #bbb;
+}
+.boton-salir {
+  background: #ff4b4b;
+  color: #fff;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.boton-salir:hover {
+  background: #cc3636;
+}
+
+/* Tarjetas */
+.tarjeta {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Formulario */
 .formulario {
   display: flex;
   gap: 10px;
@@ -82,65 +82,59 @@ body {
 .formulario input {
   flex: 1;
   min-width: 150px;
-  padding: 10px;
-  background: #0f131f;
-  border: 1px solid #333;
-  border-radius: 8px;
+  padding: 12px;
+  background: #10141c;
   color: white;
+  border: 1px solid #333;
+  border-radius: 10px;
 }
 .modo-claro .formulario input {
-  background: #f0f0f0;
+  background: #eee;
   color: #000;
-  border: 1px solid #ccc;
 }
 .formulario button {
-  background: #00ffe0;
+  background: linear-gradient(90deg, #ffee00, #00ffe0);
   color: #000;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 .formulario button:hover {
-  background: #00ccb4;
+  filter: brightness(1.2);
 }
 
-/* TABLA */
+/* Tabla */
 table {
   width: 100%;
   border-collapse: collapse;
 }
 th, td {
-  padding: 12px;
-  border-bottom: 1px solid #444;
+  padding: 10px;
+  border-bottom: 1px solid #333;
 }
 th {
-  background-color: #00ffe0;
+  background: #00ffe0;
   color: #000;
 }
 tr:nth-child(even) {
-  background-color: #101828;
+  background: #101828;
 }
 tr:nth-child(odd) {
-  background-color: #0e141f;
+  background: #0e141f;
 }
 .modo-claro tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background: #fafafa;
 }
 .modo-claro tr:nth-child(odd) {
-  background-color: #e9e9e9;
-}
-input[type="number"] {
-  width: 90px;
-  padding: 6px;
-  border-radius: 6px;
-  border: none;
+  background: #e9e9e9;
 }
 
-/* BOTONES DE TABLA */
+/* Botones editar/eliminar */
 .btn-editar, .btn-eliminar {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border: none;
   border-radius: 6px;
   font-weight: bold;
@@ -162,7 +156,7 @@ input[type="number"] {
   background-color: #cc3838;
 }
 
-/* EXPORTAR A EXCEL */
+/* Botón exportar */
 .exportar-derecha {
   text-align: right;
   margin-top: 1rem;
@@ -170,24 +164,24 @@ input[type="number"] {
 .boton-exportar {
   background: #ffee00;
   color: #000;
-  padding: 8px 16px;
+  padding: 10px 20px;
+  border-radius: 10px;
   text-decoration: none;
-  border-radius: 8px;
   font-weight: bold;
 }
 .boton-exportar:hover {
   background: #e0d200;
 }
 
-/* VALOR TOTAL */
+/* Valor total animado */
 .contador-grande {
-  font-size: 2.4rem;
+  font-size: 2.5rem;
   text-align: center;
   font-weight: bold;
   color: #00ffe0;
 }
 
-/* FOOTER */
+/* Footer */
 footer {
   text-align: center;
   margin-top: 3rem;
@@ -195,16 +189,24 @@ footer {
   color: #aaa;
 }
 
-/* LOADER */
+/* Loader */
 .loader-fondo {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
   background: #000;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+}
+.loader-logo {
+  font-size: 2.5rem;
+  font-family: 'Orbitron', sans-serif;
+  color: #00ffe0;
+  margin-bottom: 1rem;
+  animation: fadeInDown 1.2s ease-out;
 }
 .loader-spinner {
   width: 48px;
@@ -217,74 +219,47 @@ footer {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
-/* LOGIN MODERNO Y LUJOSO */
-body {
-  font-family: 'Poppins', sans-serif;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.login-container {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at top right, #0f121a, #0b0f19);
-  padding: 1rem;
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .contenedor {
+    padding: 1rem;
+  }
 
-.login-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(0, 255, 224, 0.08);
-  animation: fadeIn 0.8s ease;
-}
+  .cabecera-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 
-.login-card h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #00ffe0;
-}
-.login-card h1 span {
-  color: #fff;
-}
-.login-card .sub {
-  font-size: 1rem;
-  color: #bbb;
-  margin-bottom: 1.8rem;
-}
+  .formulario {
+    flex-direction: column;
+  }
 
-.formulario-login input {
-  padding: 12px;
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid #444;
-  background: #10141c;
-  color: #fff;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-.formulario-login button {
-  background: linear-gradient(90deg, #ffee00, #00ffe0);
-  padding: 12px;
-  width: 100%;
-  font-weight: bold;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-.formulario-login button:hover {
-  filter: brightness(1.15);
-}
+  .formulario input,
+  .formulario button {
+    width: 100%;
+  }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  table th, table td {
+    font-size: 0.9rem;
+  }
+
+  .contador-grande {
+    font-size: 1.8rem;
+  }
+
+  .boton-salir {
+    align-self: flex-end;
+  }
 }

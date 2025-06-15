@@ -2,22 +2,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Crypto Dashboard 2025</title>
+  <title>CriptoDashboard 2025</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="modo-oscuro">
 
-  <!-- Botón cambio de modo -->
-  <div class="modo-toggle">
-    <button id="modoBtn">🌗</button>
+  <!-- Animación de carga con logo -->
+  <div id="loader" class="loader-fondo">
+    <div class="loader-logo">DVR</div>
+    <div class="loader-spinner"></div>
   </div>
 
-  <!-- Pantalla de carga -->
-  <div id="loader" class="loader-fondo">
-    <div class="loader-spinner"></div>
+  <!-- Botón modo claro/oscuro -->
+  <div class="modo-toggle">
+    <button id="modoBtn">🌗</button>
   </div>
 
   <div class="contenedor">
@@ -29,24 +30,21 @@
       <a href="/logout" class="boton-salir">Cerrar sesión</a>
     </header>
 
-    <!-- Formulario -->
-    <section class="tarjeta">
-      <h2>➕ Agregar criptomoneda</h2>
+    <section class="tarjeta glass">
+      <h2>➕ Agregar Criptomoneda</h2>
       <form action="/agregar" method="POST" class="formulario">
-        <input type="text" name="nombre" required placeholder="Nombre de la cripto (ej: bitcoin)">
+        <input type="text" name="nombre" required placeholder="Nombre (ej: bitcoin)">
         <input type="number" name="cantidad" step="any" required placeholder="Cantidad que posees">
         <button type="submit">Agregar</button>
       </form>
     </section>
 
-    <!-- Valor total -->
-    <section class="tarjeta">
+    <section class="tarjeta glass">
       <h2>💰 Valor Total</h2>
       <div id="contadorValor" class="contador-grande">0</div>
     </section>
 
-    <!-- Tabla -->
-    <section class="tarjeta">
+    <section class="tarjeta glass">
       <h2>📋 Historial</h2>
       <div class="tabla-scroll">
         <table>
@@ -73,7 +71,7 @@
               </td>
               <td>
                 <form action="/eliminar/{{ fila['nombre'] }}" method="POST">
-                  <button class="btn-eliminar" type="submit" onclick="return confirm('¿Eliminar {{ fila['nombre'] }}?')">🗑️</button>
+                  <button class="btn-eliminar" type="submit" onclick="return confirm('Eliminar {{ fila['nombre'] }}?')">🗑️</button>
                 </form>
               </td>
             </tr>
@@ -86,13 +84,11 @@
       </div>
     </section>
 
-    <!-- Gráfico -->
-    <section class="tarjeta">
+    <section class="tarjeta glass">
       <h2>📈 Evolución</h2>
       <canvas id="graficoTotal" height="120"></canvas>
     </section>
 
-    <!-- Footer -->
     <footer>
       <p>🪙 Creado por DVR - 2025</p>
     </footer>
@@ -100,10 +96,8 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Ocultar loader
       document.getElementById("loader").style.display = "none";
 
-      // Modo claro/oscuro
       const body = document.body;
       const modoBtn = document.getElementById('modoBtn');
       modoBtn.addEventListener('click', () => {
@@ -111,9 +105,8 @@
         body.classList.toggle('modo-claro');
       });
 
-      // Gráfico
       const ctx = document.getElementById('graficoTotal').getContext('2d');
-      const grafico = new Chart(ctx, {
+      new Chart(ctx, {
         type: 'line',
         data: {
           labels: {{ fechas | tojson }},
@@ -138,7 +131,6 @@
         }
       });
 
-      // Contador animado
       function animarContador(id, valorFinal) {
         let actual = 0;
         const incremento = valorFinal / 60;
@@ -153,7 +145,6 @@
           }
         }, 20);
       }
-
       animarContador("contadorValor", {{ totales[-1] | default(0) }});
     });
   </script>

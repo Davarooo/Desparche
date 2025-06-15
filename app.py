@@ -1,128 +1,131 @@
-from flask import Flask, render_template, request, redirect, make_response, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
 import pandas as pd
-import os
 from datetime import datetime
+import os
 import requests
 
 app = Flask(__name__)
-CSV_PATH = 'data/historial_portafolio.csv'
-COINGECKO_URL = 'https://api.coingecko.com/api/v3/simple/price'
+app.secret_key = 'clave-super-secreta'
 
+DATA_PATH = 'data/historial_portafolio.csv'
 
-def inicializar_csv():
-    if not os.path.exists(CSV_PATH):
-        os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
-        ejemplo = pd.DataFrame([
-            {"nombre": "bitcoin", "cantidad": 1.0, "precio_usd": 64000, "valor_total_usd": 64000},
-            {"nombre": "ethereum", "cantidad": 2.0, "precio_usd": 3500, "valor_total_usd": 7000},
-            {"nombre": "solana", "cantidad": 10, "precio_usd": 150, "valor_total_usd": 1500}
-        ])
-        ejemplo.to_csv(CSV_PATH, index=False)
+# 🟢 Asegura que el CSV exista
+def crear_archivo_si_no_existe():
+    if not os.path.exists(DATA_PATH):
+        df = pd.DataFrame(columns=["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"])
+        df.to_csv(DATA_PATH, index=False)
 
-
-def cargar_portafolio():
+# 🟢 Precios reales desde CoinGecko
+def obtener_precio(nombre):
     try:
-        df = pd.read_csv(CSV_PATH)
-        columnas_esperadas = {"nombre", "cantidad", "precio_usd", "valor_total_usd"}
-        if not columnas_esperadas.issubset(df.columns):
-            raise ValueError("CSV mal estructurado.")
-        return df
+        r = requests.get(f"https://api.coingecko.com/api/v3/simple/price?ids={nombre}&vs_currencies=usd")
+        return r.json()[nombre]['usd']
     except:
-        return pd.DataFrame(columns=["nombre", "cantidad", "precio_usd", "valor_total_usd"])
+        return None
 
+# 🟢 Ruta raíz
+@app.route('/')
+def home():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
 
-def guardar_portafolio(df):
-    df.to_csv(CSV_PATH, index=False)
-
-
-def obtener_precios(criptos):
+    crear_archivo_si_no_existe()
     try:
-        r = requests.get(COINGECKO_URL, params={'ids': ','.join(criptos), 'vs_currencies': 'usd'})
-        return r.json()
-    except:
-        return {}
+        df = pd.read_csv(DATA_PATH)
+        columnas = df.columns.tolist()
+        registros = df.to_dict(orient='records')
+        totales = df.groupby('fecha')['valor_total_usd'].sum().round(2).tolist()
+        fechas = df['fecha'].unique().tolist()
+    except Exception as e:
+        columnas = []; registros = []; totales = [0]; fechas = []
 
+    return render_template("index.html", user=session['usuario'], columnas=columnas,
+                           registros=registros, totales=totales, fechas=fechas)
 
-@app.route("/")
-def index():
-    user = request.cookies.get("user_name")
-    if not user:
-        return redirect("/login")
-
-    inicializar_csv()
-    df = cargar_portafolio()
-    columnas = df.columns.tolist()
-    registros = df.to_dict(orient="records")
-    fechas = [datetime.now().strftime("%Y-%m-%d")]
-    totales = [df["valor_total_usd"].sum()] if not df.empty else [0]
-
-    return render_template("index.html", columnas=columnas, registros=registros, fechas=fechas, totales=totales, user=user)
-
-
-@app.route("/login", methods=["GET", "POST"])
+# 🟢 Login básico
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        nombre = request.form["nombre"]
-        resp = make_response(redirect("/"))
-        resp.set_cookie("user_name", nombre)
-        return resp
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        session['usuario'] = nombre
+        return redirect(url_for('home'))
     return render_template("login.html")
 
-
-@app.route("/logout")
+# 🟢 Logout
+@app.route('/logout')
 def logout():
-    resp = make_response(redirect("/login"))
-    resp.set_cookie("user_name", "", expires=0)
-    return resp
+    session.clear()
+    return redirect(url_for('login'))
 
-
-@app.route("/agregar", methods=["POST"])
+# 🟢 Agregar cripto
+@app.route('/agregar', methods=['POST'])
 def agregar():
-    df = cargar_portafolio()
-    nombre = request.form["nombre"].lower()
-    try:
-        cantidad = float(request.form["cantidad"])
-    except:
-        cantidad = 0
-    precios = obtener_precios([nombre])
-    precio = precios.get(nombre, {}).get("usd", 0)
-    total = precio * cantidad
+    crear_archivo_si_no_existe()
+    nombre = request.form.get('nombre').lower()
+    cantidad = float(request.form.get('cantidad'))
+
+    precio = obtener_precio(nombre)
+    if precio is None:
+        return "Error al obtener precio"
+
+    total = round(precio * cantidad, 2)
+    hoy = datetime.now().strftime('%Y-%m-%d')
+
     nuevo = pd.DataFrame([{
-        "nombre": nombre,
-        "cantidad": cantidad,
-        "precio_usd": precio,
-        "valor_total_usd": total
+        'fecha': hoy,
+        'nombre': nombre,
+        'cantidad': cantidad,
+        'precio_usd': precio,
+        'valor_total_usd': total
     }])
+
+    df = pd.read_csv(DATA_PATH)
     df = pd.concat([df, nuevo], ignore_index=True)
-    guardar_portafolio(df)
-    return redirect("/")
+    df.to_csv(DATA_PATH, index=False)
+    return redirect(url_for('home'))
 
-
-@app.route("/editar/<nombre>", methods=["POST"])
-def editar(nombre):
-    df = cargar_portafolio()
-    nueva = float(request.form["nueva_cantidad"])
-    precios = obtener_precios([nombre])
-    precio = precios.get(nombre, {}).get("usd", 0)
-    df.loc[df["nombre"] == nombre, "cantidad"] = nueva
-    df.loc[df["nombre"] == nombre, "precio_usd"] = precio
-    df.loc[df["nombre"] == nombre, "valor_total_usd"] = precio * nueva
-    guardar_portafolio(df)
-    return redirect("/")
-
-
-@app.route("/eliminar/<nombre>", methods=["POST"])
+# 🟢 Eliminar
+@app.route('/eliminar/<nombre>', methods=['POST'])
 def eliminar(nombre):
-    df = cargar_portafolio()
-    df = df[df["nombre"] != nombre]
-    guardar_portafolio(df)
-    return redirect("/")
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['nombre'] != nombre]
+    df.to_csv(DATA_PATH, index=False)
+    return redirect(url_for('home'))
 
+# 🟢 Editar
+@app.route('/editar/<nombre>', methods=['POST'])
+def editar(nombre):
+    nueva_cantidad = float(request.form.get('nueva_cantidad'))
+    precio = obtener_precio(nombre)
+    if precio is None:
+        return "Error con el precio"
 
-@app.route("/exportar")
+    total = round(precio * nueva_cantidad, 2)
+    hoy = datetime.now().strftime('%Y-%m-%d')
+
+    df = pd.read_csv(DATA_PATH)
+    df = df[df['nombre'] != nombre]
+
+    nuevo = pd.DataFrame([{
+        'fecha': hoy,
+        'nombre': nombre,
+        'cantidad': nueva_cantidad,
+        'precio_usd': precio,
+        'valor_total_usd': total
+    }])
+
+    df = pd.concat([df, nuevo], ignore_index=True)
+    df.to_csv(DATA_PATH, index=False)
+    return redirect(url_for('home'))
+
+# 🟢 Exportar a Excel
+@app.route('/exportar')
 def exportar():
-    return send_file(CSV_PATH, as_attachment=True)
+    df = pd.read_csv(DATA_PATH)
+    excel_path = "data/portafolio_exportado.xlsx"
+    df.to_excel(excel_path, index=False)
+    return send_file(excel_path, as_attachment=True)
 
-
-if __name__ == "__main__":
+# 🔵 Ejecutar
+if __name__ == '__main__':
     app.run(debug=True)

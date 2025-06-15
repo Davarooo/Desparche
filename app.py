@@ -8,13 +8,13 @@ app = Flask(__name__)
 app.secret_key = 'clave-super-secreta'
 DATA_PATH = 'data/historial_portafolio.csv'
 
-# 🟢 Crear archivo si no existe
+# Crear archivo con columnas correctas si no existe
 def crear_archivo_si_no_existe():
     if not os.path.exists(DATA_PATH):
         df = pd.DataFrame(columns=["fecha", "nombre", "cantidad", "precio_usd", "valor_total_usd"])
         df.to_csv(DATA_PATH, index=False)
 
-# 🟢 Obtener precio desde CoinGecko
+# Obtener precio actual desde CoinGecko
 def obtener_precio(nombre):
     try:
         r = requests.get(f"https://api.coingecko.com/api/v3/simple/price?ids={nombre}&vs_currencies=usd")
@@ -22,7 +22,7 @@ def obtener_precio(nombre):
     except:
         return None
 
-# 🟢 Página principal
+# Página principal (dashboard)
 @app.route('/')
 def home():
     if 'usuario' not in session:
@@ -31,20 +31,26 @@ def home():
     crear_archivo_si_no_existe()
     df = pd.read_csv(DATA_PATH)
 
-    # 🔍 Limpiar filas vacías
+    # Limpiar filas vacías
     df.dropna(inplace=True)
     df.to_csv(DATA_PATH, index=False)
 
     columnas = df.columns.tolist()
     registros = df.to_dict(orient='records')
-    totales = df.groupby('fecha')['valor_total_usd'].sum().round(2).tolist()
-    fechas = df['fecha'].unique().tolist()
+
+    # Protección por si faltan columnas clave
+    if 'fecha' in df.columns and 'valor_total_usd' in df.columns:
+        totales = df.groupby('fecha')['valor_total_usd'].sum().round(2).tolist()
+        fechas = df['fecha'].unique().tolist()
+    else:
+        totales = []
+        fechas = []
 
     return render_template("index.html", user=session['usuario'],
                            columnas=columnas, registros=registros,
                            totales=totales, fechas=fechas)
 
-# 🟢 Página de login
+# Página de login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -53,13 +59,13 @@ def login():
         return redirect(url_for('home'))
     return render_template("login.html")
 
-# 🟢 Cerrar sesión
+# Cerrar sesión
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# 🟢 Agregar criptomoneda
+# Agregar criptomoneda
 @app.route('/agregar', methods=['POST'])
 def agregar():
     crear_archivo_si_no_existe()
@@ -68,7 +74,7 @@ def agregar():
     precio = obtener_precio(nombre)
 
     if precio is None:
-        return "Error al obtener el precio"
+        return "Error al obtener el precio de CoinGecko"
 
     total = round(precio * cantidad, 2)
     hoy = datetime.now().strftime('%Y-%m-%d')
@@ -88,7 +94,7 @@ def agregar():
 
     return redirect(url_for('home'))
 
-# 🟢 Editar cantidad
+# Editar criptomoneda
 @app.route('/editar/<nombre>', methods=['POST'])
 def editar(nombre):
     nueva_cantidad = float(request.form.get('nueva_cantidad'))
@@ -117,7 +123,7 @@ def editar(nombre):
 
     return redirect(url_for('home'))
 
-# 🟢 Eliminar cripto
+# Eliminar criptomoneda
 @app.route('/eliminar/<nombre>', methods=['POST'])
 def eliminar(nombre):
     df = pd.read_csv(DATA_PATH)
@@ -125,7 +131,7 @@ def eliminar(nombre):
     df.to_csv(DATA_PATH, index=False)
     return redirect(url_for('home'))
 
-# 🟢 Exportar a Excel
+# Exportar a Excel
 @app.route('/exportar')
 def exportar():
     df = pd.read_csv(DATA_PATH)
@@ -133,6 +139,6 @@ def exportar():
     df.to_excel(path, index=False)
     return send_file(path, as_attachment=True)
 
-# 🟢 Ejecutar app
+# Ejecutar la app
 if __name__ == '__main__':
     app.run(debug=True)
